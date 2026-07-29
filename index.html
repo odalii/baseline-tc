@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baseline TC — Tennis Club</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js">
+    </script>
+
+    <!-- Firebase Config -->
+    <script src="firebase-config.js">
+    </script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="loader-ball"></div>
+        <div class="loader-label">LOADING MATCH DAY…</div>
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header>
+        <nav>
+            <div class="logo">
+                <span class="dot"></span>BASELINE&nbsp;TC
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#players">Players</a></li>
+                <li><a href="#rankings">Rankings</a></li>
+                <li><a href="#fixtures">Fixtures</a></li>
+                <li><a href="#news">News</a></li>
+                <li><a href="#contribute">Contribute</a></li>
+            </ul>
+            <div class="nav-cta">
+                <button class="btn btn-outline" id="loginBtn">Log in</button>
+                <button class="btn btn-donate" id="donateNavBtn">Donate</button>
+                <button class="btn btn-admin hidden" id="adminBtn">Admin Panel</button>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-eyebrow">KARATINA · EST. 2026</div>
+            <h1>WE PLAY EVERY<br />BALL LIKE IT'S <span>MATCH POINT</span></h1>
+            <p>Baseline TC is a community tennis club based in Karatina, dedicated to nurturing and growing local talent.</p>
+            <div class="hero-actions">
+                <a href="#fixtures" class="btn btn-primary">See Fixtures</a>
+                <a href="#contribute" class="btn btn-outline">Support the Team</a>
+            </div>
+            <div class="hero-score">
+                <div>
+                    <div class="big">14–3</div>
+                    <div class="lbl">SEASON RECORD</div>
+                </div>
+                <div>
+                    <div class="big">#2</div>
+                    <div class="lbl">LEAGUE RANK</div>
+                </div>
+                <div>
+                    <div class="big">18</div>
+                    <div class="lbl">SQUAD PLAYERS</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLAYERS SECTION -->
+    <section class="players" id="players">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <div>
+                    <div class="eyebrow">The Squad</div>
+                    <h2>Players</h2>
+                </div>
+                <p class="section-sub">Singles specialists, doubles pairs, and the rising juniors.</p>
+            </div>
+            <div class="filter-bar reveal">
+                <input type="text" id="playerSearch" placeholder="Search players…" />
+                <button class="chip active" data-filter="All">All</button>
+                <button class="chip" data-filter="Singles">Singles</button>
+                <button class="chip" data-filter="Doubles">Doubles</button>
+                <button class="chip" data-filter="Junior">Junior</button>
+            </div>
+            <div class="player-grid" id="playerGrid"></div>
+        </div>
+    </section>
+
+    <!-- RANKINGS SECTION -->
+    <section class="rankings" id="rankings">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <div>
+                    <div class="eyebrow" style="color:var(--yellow);">Leaderboard</div>
+                    <h2>Rankings</h2>
+                </div>
+                <p class="section-sub">Points update automatically after every league fixture.</p>
+            </div>
+            <table class="rank-table reveal">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Player</th>
+                        <th>Category</th>
+                        <th>W–L</th>
+                        <th>Form</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody id="rankBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- FIXTURES / RESULTS -->
+    <section class="fixtures" id="fixtures">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <div>
+                    <div class="eyebrow">Match Calendar</div>
+                    <h2>Fixtures &amp; Results</h2>
+                </div>
+                <p class="section-sub">Home and away matches across the league.</p>
+            </div>
+            <div class="tabs reveal">
+                <button class="tab-btn active" data-tab="upcoming">Upcoming</button>
+                <button class="tab-btn" data-tab="results">Results</button>
+            </div>
+            <div class="fx-list reveal" id="upcomingList"></div>
+            <div class="fx-list hidden" id="resultsList"></div>
+        </div>
+    </section>
+
+    <!-- NEWS SECTION -->
+    <section class="news" id="news">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <div>
+                    <div class="eyebrow">Club Wire</div>
+                    <h2>News &amp; Announcements</h2>
+                </div>
+                <p class="section-sub">Team updates, schedule changes, and results.</p>
+            </div>
+            <div class="news-grid reveal" id="newsGrid"></div>
+        </div>
+    </section>
+
+    <!-- CONTRIBUTE / MPESA -->
+    <section class="contribute" id="contribute">
+        <div class="wrap contribute-grid">
+            <div class="reveal">
+                <div class="eyebrow" style="color:var(--yellow);">Back The Team</div>
+                <h2>Fund the season, court to trophy.</h2>
+                <p>Every contribution goes straight to balls fees and tournament organisation.</p>
+                <div class="progress-wrap">
+                    <div class="progress-labels">
+                        <span id="raisedAmount">KES 0 raised</span>
+                        <span>Goal: KES 5000</span>
+                    </div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" id="progressFill" style="width:0%;"></div>
+                    </div>
+                </div>
+                <button class="btn btn-outline" id="historyBtn" style="border-color:rgba(255,255,255,.5);">
+                    View Transaction History
+                </button>
+            </div>
+
+            <div class="mpesa-card reveal">
+                <div class="mpesa-head">
+                    <div class="mpesa-logo">M</div>
+                    <div>
+                        <b>Contribute via M-Pesa</b>
+                        <span>Powered by Safaricom (demo)</span>
+                    </div>
+                </div>
+                <div class="amount-options" id="amountOptions">
+                    <button data-amt="200">KES 200</button>
+                    <button data-amt="500" class="active">KES 500</button>
+                    <button data-amt="1000">KES 1,000</button>
+                </div>
+                <input type="text" id="customAmount" placeholder="Or enter custom amount (KES)" />
+                <input type="tel" id="phoneInput" placeholder="M-Pesa phone number e.g. 07XXXXXXXX" />
+                <button class="mpesa-submit" id="stkBtn">Send Payment Prompt</button>
+                <p class="mpesa-note">You'll receive an STK push on your phone to confirm.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="wrap">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom:14px;">
+                        <span class="dot"></span>BASELINE&nbsp;TC
+                    </div>
+                    <p style="font-size:13.5px; line-height:1.6; max-width:280px; color:#9fb2c6;">
+                        A Karatina-based tennis club competing across Kenya's national league.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#">IG</a>
+                        <a href="#">X</a>
+                        <a href="#">FB</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Club</h4>
+                    <ul>
+                        <li><a href="#players">Players</a></li>
+                        <li><a href="#rankings">Rankings</a></li>
+                        <li><a href="#fixtures">Fixtures</a></li>
+                        <li><a href="#news">News</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#contribute">Donate</a></li>
+                        <li><a href="#" id="historyLink2">Transactions</a></li>
+                        <li><a href="#">Sponsorship</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Account</h4>
+                    <ul>
+                        <li><a href="#" id="footerLogin">Log in</a></li>
+                        <li><a href="#" id="footerSignup">Sign up</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 Baseline Tennis Club. All rights reserved.</span>
+                <span>Karatina, Kenya</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <!-- Auth Modal -->
+    <div class="modal-backdrop" id="authModal">
+        <div class="modal">
+            <button class="modal-close" data-close>&times;</button>
+            <div class="modal-toggle">
+                <button class="active" data-mode="login">Log in</button>
+                <button data-mode="signup">Sign up</button>
+            </div>
+            <h3 id="authTitle">Welcome back</h3>
+            <p class="sub" id="authSub">Log in to follow players and manage your contributions.</p>
+            <form id="authForm">
+                <input type="text" id="signupName" class="hidden" placeholder="Full name" />
+                <input type="email" id="authEmail" placeholder="Email address" required />
+                <input type="password" id="authPassword" placeholder="Password" required />
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+                    Continue
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STK Modal -->
+    <div class="modal-backdrop" id="stkModal">
+        <div class="modal">
+            <button class="modal-close" data-close>&times;</button>
+            <h3>Confirm on your phone</h3>
+            <p class="sub" id="stkSub">Sending STK push…</p>
+            <div class="stk-status" id="stkStatus">
+                <div class="spin"></div>
+                <div class="stk-check">✓</div>
+                <p id="stkMsg" class="mono" style="font-size:13px; color:#666;">
+                    Waiting for M-Pesa confirmation…
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-backdrop" id="historyModal">
+        <div class="modal" style="max-width:460px;">
+            <button class="modal-close" data-close>&times;</button>
+            <h3>Transaction History</h3>
+            <p class="sub">Recent contributions — public for transparency.</p>
+            <div id="txList" style="display:grid; gap:10px; max-height:300px; overflow:auto;"></div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast">
+        <span class="dot"></span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <!-- Main Site JavaScript -->
+    <script src="script.js">
+    </script>
+</body>
+</html>
